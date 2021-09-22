@@ -1,0 +1,45 @@
+.pnf-container {
+  height: 100vh;
+  padding-top: var(--header-height);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  font-family: "Raleway", sans-serif;
+}
+.pnf-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+.pnf-header * {
+  padding: 1rem;
+}
+.pnf-message {
+  font-size: 2.75rem;
+}
+.pnf-description {
+  color: var(--dark-grey);
+  font-size: 1.25rem;
+  line-height: 1.25;
+  width: 65%;
+}
+.error-illustration {
+  width: 500px;
+}
+
+@media screen and (max-width: 670px) {
+  .pnf-description {
+    width: 90%;
+  }
+}
+@media screen and (max-width: 520px) {
+  .pnf-message {
+    font-size: 2.15rem;
+  }
+  .error-illustration {
+    width: 75vw;
+  }
+}

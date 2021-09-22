@@ -1,0 +1,42 @@
+.select-container {
+  color: var(--darkest-blue);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.placeholder-option {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: 0.5rem;
+}
+.select-arrow-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--light-blue);
+  border-radius: 50%;
+}
+.select-check-icon {
+  width: 1.5rem;
+  color: white;
+  background-color: var(--green);
+  border-radius: 50%;
+}
+.select-options-container {
+  background-color: var(--light-blue);
+  width: 100%;
+}
+.select-option-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0.5rem;
+}
+.select-option {
+  width: 100%;
+  cursor: pointer;
+  list-style: none;
+}

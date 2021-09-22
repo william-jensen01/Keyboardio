@@ -1,0 +1,131 @@
+.post-small-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 0px 15px rgba(187, 201, 208, 0.2);
+  background-color: var(--darkest-blue);
+  color: white;
+  width: 600px;
+  height: 150px;
+  margin: 1rem;
+  z-index: 1;
+}
+.post-small-image-container {
+  width: 40%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.post-small-hero-image-na {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.post-small-hero-image-foreground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.post-small-hero-image-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(3px);
+  opacity: 0.3;
+}
+.post-small-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 100%;
+  width: calc(100% - 30%);
+  padding: 0.5rem;
+}
+.post-small-title {
+  white-space: nowrap;
+  overflow-x: hidden;
+  font-size: 1.2rem;
+  letter-spacing: 0.1.5rem;
+  color: inherit;
+}
+.post-small-creator {
+  color: var(--dark-grey);
+  letter-spacing: 0.1rem;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+.post-small-date-type {
+  letter-spacing: 0.05rem;
+  font-family: "Poppins", sans-serif;
+}
+.post-small-date {
+  font-size: 0.85rem;
+  margin-left: 10px;
+  letter-spacing: 0.1rem;
+}
+.skeleton {
+  background: linear-gradient(-90deg, #dfdfdf 0%, #f8f8f8 50%, #dfdfdf 100%);
+  background-size: 400% 400%;
+  animation: loading 1s infinite;
+}
+.skeleton-text {
+  width: 100%;
+  height: 10px;
+  margin: 0.5rem 0;
+}
+.skeleton-text:nth-child(2) {
+  width: 30%;
+}
+.skeleton-text:nth-child(5) {
+  width: 75%;
+}
+@keyframes loading {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: -140% 0%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .post-small-container {
+    width: 90vw;
+    height: 125px;
+    margin: 0.75rem;
+  }
+  .post-small-title {
+    /* font-size: 3vw; */
+    font-size: 1rem;
+  }
+  .post-small-creator {
+    /* font-size: 2vw; */
+    font-size: 0.5rem;
+  }
+  .post-small-date-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+  }
+  .post-small-date-type {
+    /* font-size: 2.15vw; */
+    font-size: 0.6rem;
+  }
+  .post-small-date {
+    margin-left: 0;
+    white-space: pre-wrap;
+    /* font-size: 2vw; */
+    font-size: 0.7rem;
+    text-align: right;
+  }
+}
