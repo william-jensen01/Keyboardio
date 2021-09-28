@@ -20,6 +20,12 @@
   align-items: center;
   cursor: pointer;
 }
+.post-small-hero-image-none {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: default;
+}
 .post-small-hero-image-na {
   width: 100%;
   height: 100%;

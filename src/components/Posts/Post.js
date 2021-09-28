@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 
+import No from "../../assets/no.png";
 import ImageNotAvailable from "../../assets/no-image.png";
 import { useOutsideToggle } from "../../util/useOutsideToggle";
 import ImageCarousel from "../ImageCarousel";
@@ -88,9 +89,9 @@ function Post({ post, cardStyle }) {
             </>
           ) : (
             <img
-              src={ImageNotAvailable}
+              src={No}
               alt="img not available"
-              className={`post-${cardStyle}-hero-image-na`}
+              className={`post-${cardStyle}-hero-image-none`}
               loading="lazy"
             />
           )}
