@@ -34,7 +34,14 @@ function ImageCarousel({ images, toggleCarousel }) {
     <div className="image-carousel-container">
       {images.length > 0 && (
         <div className="carousel-wrapper">
-          <button className="arrow-btn" onClick={prevImage}>
+          <button
+            className="arrow-btn"
+            onClick={() => {
+              if (images.length > 1) {
+                prevImage();
+              }
+            }}
+          >
             {<Arrow style={{ transform: "rotate(180deg)" }} />}
           </button>
           <div className="carousel-center">
@@ -66,7 +73,14 @@ function ImageCarousel({ images, toggleCarousel }) {
               {activeImg["idx"] + 1}/{images.length}
             </div>
           </div>
-          <button className="arrow-btn" onClick={nextImage}>
+          <button
+            className="arrow-btn"
+            onClick={() => {
+              if (images.length > 1) {
+                nextImage();
+              }
+            }}
+          >
             {<Arrow />}
           </button>
           <button className="close-btn" onClick={() => toggleCarousel(images)}>
