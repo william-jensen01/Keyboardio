@@ -118,7 +118,7 @@ function PostsDashboard() {
 								placeholder={<PostSkeleton cardStyle={cardStyle} />}
 								once
 							>
-								<Post post={post} cardStyle={cardStyle} />
+								<Post post={post} cardStyle={cardStyle} dateType={dateType} />
 							</LazyLoad>
 						))}
 				</div>
