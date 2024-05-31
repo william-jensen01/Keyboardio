@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useHistory, Redirect, useParams, useLocation } from "react-router-dom";
 import LazyLoad from "react-lazyload";
 
+import { useOutsideToggle } from "../../util/useOutsideToggle";
 import Post from "./Post";
-import PostSkeleton from "./PostSkeleton";
 import Paginate from "../Paginate";
 import FilterPosts from "../FilterPosts";
 import { ReactComponent as Wave } from "../../assets/wave.svg";
 
 import "../../css/PostsDashboard.css";
+import ImageCarousel from "../ImageCarousel";
 
 function PostsDashboard() {
 	const params = useParams();
@@ -22,6 +23,14 @@ function PostsDashboard() {
 	const [currentPosts, setCurrentPosts] = useState([]);
 	const [referrer, setReferrer] = useState(null); // when true, will contain a url to redirect page. Used for updating url info (postType, dateType, page, limit)
 	const [cardStyle] = useState("small"); // allow the ability to change card style preference in the future
+	const [activePost, setActivePost] = useState(null); // for showing ImageCarousel
+	console.log("active", activePost);
+	// const [activePost, setActivePost] = useState({
+	// 	element: null,
+	// 	data: {},
+	// });
+
+	const carouselRef = useRef(null);
 
 	// (**) => ignore; (--) => what it is
 	// url path params -> **website url**/posts/--dateType--/--postType--?**query params**
@@ -81,9 +90,17 @@ function PostsDashboard() {
 		fetchData();
 	}, [history, dateType, postType, page, limit]);
 
+	useOutsideToggle(carouselRef, () => setActivePost(undefined));
+
 	return (
-		<div className="posts-dashboard-container">
+		<div className="posts-dashboard-container" ref={carouselRef}>
 			{referrer && <Redirect push to={referrer} />}
+			{activePost?.images?.length > 0 && (
+				<ImageCarousel
+					images={activePost?.images}
+					toggleCarousel={(x) => setActivePost(null)}
+				/>
+			)}
 			<div className="posts-main-content">
 				<div className="posts-dashboard-header">
 					<h1 className="posts-dashboard-title">
@@ -108,17 +125,26 @@ function PostsDashboard() {
 				<div className="posts-container">
 					{isLoading &&
 						Array.from(Array(limit), (e, i) => (
-							<PostSkeleton cardStyle={cardStyle} key={i + 1} />
+							<Post key={i} post={{}} cardStyle={cardStyle} isSkeleton={true} />
 						))}
 					{isLoading === false &&
 						currentPosts.length > 0 &&
 						currentPosts.map((post) => (
 							<LazyLoad
 								key={post.id}
-								placeholder={<PostSkeleton cardStyle={cardStyle} />}
+								placeholder={
+									<Post post={{}} cardStyle={cardStyle} isSkeleton={true} />
+								}
 								once
 							>
-								<Post post={post} cardStyle={cardStyle} dateType={dateType} />
+								<Post
+									post={post}
+									cardStyle={cardStyle}
+									dateType={dateType}
+									setActivePost={setActivePost}
+									isSkeleton={false}
+									once
+								/>
 							</LazyLoad>
 						))}
 				</div>

@@ -1,123 +1,191 @@
-import React, { useState, useRef } from "react";
-import { format, parseISO } from "date-fns";
+import React, { useState, useRef, useEffect } from "react";
+import { format, parseISO, isToday } from "date-fns";
 
-import No from "../../assets/no.png";
-import ImageNotAvailable from "../../assets/no-image.png";
-import { useOutsideToggle } from "../../util/useOutsideToggle";
-import ImageCarousel from "../ImageCarousel";
-import Loader from "../Loader";
+import Image from "../Image";
+import Comments from "../Comments/index";
+import { ReactComponent as Share } from "../../assets/share.svg";
+import { ReactComponent as Comment } from "../../assets/comment.svg";
 
-// import "./PostsDashboard.css";
 import "../../css/Post.css";
 
-function Post({ post, cardStyle, dateType }) {
-	const [imgLoaded, setImgLoaded] = useState(false);
-	const [imgError, setImgError] = useState(false);
-	const [showCarousel, setShowCarousel] = useState(false);
-	const carouselRef = useRef();
+function Post({ post, cardStyle, setActivePost, isSkeleton }) {
+	const postRef = useRef(null);
+	const containerRef = useRef(null);
+	const titleRef = useRef(null);
 
-	const toggleCarousel = () => {
-		return post.images[0] === null ? "" : setShowCarousel(!showCarousel);
+	const [showComments, setShowComments] = useState(false);
+	const [commentData, setCommentData] = useState({
+		comments: [],
+		page_info: {
+			current_page: 1,
+			has_next: false,
+			has_prev: false,
+		},
+	});
+
+	const headerHeight = document?.querySelector(".header-nav").offsetHeight;
+	const browserHeaderHeight = document?.querySelector(
+		".posts-dashboard-header"
+	).offsetHeight;
+	const totalHeight = browserHeaderHeight + headerHeight;
+
+	const updateCommentData = (newData) => {
+		setCommentData({
+			comments: [...commentData.comments, ...newData.items],
+			page_info: newData.page_info,
+		});
 	};
 
-	const handleImageError = (e) => {
-		e.target.src = ImageNotAvailable;
-		e.target.className = `post-${cardStyle}-hero-image-na`;
-		e.target.alt = "img not available";
+	const unsecureCopyToClipboard = (text) => {
+		console.log("unsecure copy");
+		const textArea = document.createElement("textarea");
+		textArea.value = text;
+		document.body.appendChild(textArea);
+		textArea.focus();
+		textArea.select();
+		try {
+			document.execCommand("copy");
+		} catch (err) {
+			console.log("unable to copy to clipboard", err);
+		}
+		document.body.removeChild(textArea);
+	};
+	const handleShare = (e) => {
+		if (window.isSecureContext && navigator.clipboard) {
+			navigator.clipboard.writeText(post.url);
+		} else {
+			unsecureCopyToClipboard(post.url);
+		}
 	};
 
 	const formatDate = (date, field) => {
-		if (dateType === "latest") {
-			if (field === "last_updated") {
-				return format(parseISO(date), "hh:mm a 'on' d, MMM. yyyy");
-			}
-			if (field === "created") {
-				return format(parseISO(date), "d, MMM. yyyy");
-			}
+		if (!date) return "";
+		const dateObj = new Date(date);
+		if (isToday(dateObj)) {
+			return format(dateObj, "hh:mm a 'Today'");
 		}
-
-		if (dateType === "newest") {
-			if (field === "last_updated") {
-				return format(parseISO(date), "d, MMM. yyyy");
-			}
-			if (field === "created") {
-				return format(parseISO(date), "hh:mm a 'on' d, MMM. yyyy");
-			}
-		}
-		// "d, MMM. yyyy 'at' HH:mm:ss"
+		return format(parseISO(date), "d, MMM. yyyy");
 	};
 
-	useOutsideToggle(carouselRef, () => setShowCarousel(false));
+	useEffect(() => {
+		const headerHeight = document.querySelector(".header-nav").offsetHeight;
+		const browserHeaderHeight = document.querySelector(
+			".posts-dashboard-header"
+		).offsetHeight;
+		const totalHeight = browserHeaderHeight + headerHeight;
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) {
+					postRef.current?.classList.add("slide-in");
+
+					observer.unobserve(entry.target);
+				} else {
+					postRef.current?.classList.remove("slide-in");
+				}
+			},
+			{ rootMargin: `-${totalHeight}px 0px 0px 0px`, threshold: [0.0] }
+		);
+		observer.observe(postRef.current);
+		return () => observer.disconnect();
+	}, []);
 
 	return (
-		<div ref={carouselRef}>
-			<div className={`post-${cardStyle}-container`}>
+		<div ref={postRef} className={`post-${cardStyle}`}>
+			<div ref={containerRef} className={`post-${cardStyle}-container`}>
 				<div
-					className={`post-${cardStyle}-image-container`}
-					onClick={toggleCarousel}
+					className={`post-image-container ${isSkeleton && "skeleton"}`}
+					onClick={(e) => {
+						setActivePost(post);
+					}}
 				>
-					{post.images[0] !== null ? (
-						<>
-							<img
-								onError={(e) => {
-									setImgError(true);
-									handleImageError(e);
-								}}
-								src={post.images[0]}
-								alt="post hero img background"
-								className={`post-${cardStyle}-hero-image-background`}
-								style={{ display: imgError ? "none" : "" }}
-							/>
-							{imgLoaded === false && <Loader />}
-
-							<img
-								onError={(e) => handleImageError(e)}
-								onLoad={() => {
-									setImgLoaded(true);
-								}}
-								src={post.images[0]}
-								className={`post-${cardStyle}-hero-image-foreground`}
-								alt="post hero img"
-								style={{ display: imgLoaded ? "" : "none" }}
-							/>
-						</>
-					) : (
-						<img
-							src={No}
-							alt="img not available"
-							className={`post-${cardStyle}-hero-image-none`}
-							loading="lazy"
-						/>
+					{!isSkeleton && post.images.length > 0 && (
+						<Image src={post.images[0]} cardStyle={cardStyle} />
 					)}
 				</div>
-				<div className={`post-${cardStyle}-info`}>
-					<a
-						href={post.url}
-						target="_blank"
-						rel="noreferrer"
-						className={`post-${cardStyle}-title`}
+
+				<div
+					className={`post-${cardStyle}-wrapper ${isSkeleton && "skeleton"}`}
+				>
+					<div className={`post-${cardStyle}-info`}>
+						<div className={`post-${cardStyle}-header`}>
+							{!isSkeleton ? (
+								<a
+									ref={titleRef}
+									className={`post-${cardStyle}-title`}
+									href={post.url}
+								>
+									{post.title}
+								</a>
+							) : (
+								<div className={`post-${cardStyle}-title skeleton`}></div>
+							)}
+						</div>
+						<div className={`post-${cardStyle}-sub`}>
+							<p
+								className={`post-${cardStyle}-type ${
+									post.post_type === "GB" ? "gb" : "ic"
+								} ${isSkeleton && "skeleton"}`}
+							>
+								{!isSkeleton && `${post.post_type}`}
+							</p>
+							<p
+								className={`post-${cardStyle}-creator ${
+									isSkeleton && "skeleton"
+								}`}
+							>
+								{!isSkeleton && post.creator}
+							</p>
+						</div>
+						<p className={`post-${cardStyle}-date`}>
+							<span className={isSkeleton && "skeleton"}>
+								{!isSkeleton && `Last Updated :`}
+							</span>
+							<span className={isSkeleton && "skeleton"}>
+								{!isSkeleton && formatDate(post.last_updated, "updated")}
+							</span>
+						</p>
+						<p className={`post-${cardStyle}-date`}>
+							<span className={isSkeleton && "skeleton"}>
+								{!isSkeleton && `Created :`}
+							</span>
+							<span className={isSkeleton && "skeleton"}>
+								{!isSkeleton && formatDate(post.created, "created")}
+							</span>
+						</p>
+					</div>
+					<div
+						className={`post-${cardStyle}-actions ${isSkeleton && "skeleton"}`}
 					>
-						{post.title}
-					</a>
-					<p className={`post-${cardStyle}-creator`}>{post.creator}</p>
-					<p className={`post-${cardStyle}-date-container`}>
-						<span className={`post-${cardStyle}-date-type`}>
-							Last updated:{" "}
-						</span>
-						<span className={`post-${cardStyle}-date`}>
-							{formatDate(post.last_updated, "last_updated")}
-						</span>
-					</p>
-					<p className={`post-${cardStyle}-date-container`}>
-						<span className={`post-${cardStyle}-date-type`}>Created: </span>
-						<span className={`post-${cardStyle}-date`}>
-							{formatDate(post.created, "created")}
-						</span>
-					</p>
+						<button
+							className={`post-${cardStyle}-button ${isSkeleton && "skeleton"}`}
+							onClick={handleShare}
+							disabled={isSkeleton}
+						>
+							<Share
+								className={`post-${cardStyle}-icon ${isSkeleton && "skeleton"}`}
+							/>
+						</button>
+						<button
+							className={`post-${cardStyle}-button ${isSkeleton && "skeleton"}`}
+							onClick={() => {
+								setShowComments((prev) => !prev);
+							}}
+							disabled={isSkeleton}
+						>
+							<Comment
+								className={`post-${cardStyle}-icon ${isSkeleton && "skeleton"}`}
+							/>
+						</button>
+					</div>
 				</div>
 			</div>
-			{showCarousel && (
-				<ImageCarousel images={post.images} toggleCarousel={toggleCarousel} />
+			{showComments && (
+				<Comments
+					topicId={post.topic_id}
+					comments={commentData.comments}
+					pageInfo={commentData.page_info}
+					updateCommentData={updateCommentData}
+				/>
 			)}
 		</div>
 	);

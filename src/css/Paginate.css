@@ -1,46 +1,47 @@
 .paginate-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 3rem;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 3rem;
 }
 .paginate-double-arrow-container {
-  cursor: pointer;
-  width: 15px;
-  color: white;
-  margin: 0 1rem;
+	cursor: pointer;
+	width: 15px;
+	color: white;
+	margin: 0 1rem;
 }
 .paginate-current {
-  color: var(--orange);
+	color: var(--orange);
 }
 .paginate-container button {
-  text-decoration: none;
-  border: none;
-  background-color: transparent;
-  margin: 0 1rem;
-  font-size: 1.25rem;
+	text-decoration: none;
+	border: none;
+	background-color: transparent;
+	margin: 0 1rem;
+	font-size: 1.25rem;
+	font-family: "Poppins", sans-serif;
 }
 .paginate-more {
-  color: white;
+	color: white;
 }
 .paginate-btn {
-  color: white;
-  cursor: pointer;
+	color: white;
+	cursor: pointer;
 }
 .paginate-btn:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
 @media screen and (max-width: 500px) {
-  .paginate-container {
-    width: 90vw;
-  }
-  .paginate-double-arrow-container {
-    width: 15px;
-  }
-  .paginate-container button {
-    margin: 0;
-    font-size: 4vw;
-  }
+	.paginate-container {
+		width: 90vw;
+	}
+	.paginate-double-arrow-container {
+		width: 15px;
+	}
+	.paginate-container button {
+		margin: 0;
+		font-size: 4vw;
+	}
 }
